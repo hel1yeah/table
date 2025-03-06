@@ -5,29 +5,56 @@
 			:tableData="mockDataLikeProps"
 			:tableName="'ReceivingFiatFromCustomer'"
 		/>
-		<HelloWorld :tableData="mockDataLikeProps" :tableName="'test'" />
+		<HelloWorld
+			:tableData="mockDataLikeProps2"
+			:tableName="'ReceivingCryptoFromCustomer'"
+		/>
 	</div>
 </template>
 
 <script setup>
 import HelloWorld from './components/HelloWorld.vue';
+import bigDecimal from 'js-big-decimal';
 import { reactive } from 'vue';
 
 const setDate = () => new Date().toLocaleDateString();
 
 const calculateRateFromPlnToEur = (divided, divisor) => {
-	return divided / divisor;
+	const dividedBD = new bigDecimal(divided);
+	const divisorBD = new bigDecimal(divisor);
+	return dividedBD.divide(divisorBD, 5).getValue(); // Ділення з точністю до 10 знаків після коми
+};
+
+const calculateRateFromEurToPln = (divided, divisor) => {
+	const dividedBD = new bigDecimal(divided);
+	const divisorBD = new bigDecimal(divisor);
+	return dividedBD.multiply(divisorBD).getValue(); // множення
 };
 
 const calculateCommission = (num, percent) => {
-	return num - (num * percent) / 100;
+	const numBD = new bigDecimal(num);
+	const percentBD = new bigDecimal(percent);
+	const commission = numBD.multiply(percentBD).divide(new bigDecimal(100), 10);
+	return numBD.subtract(commission).getValue(); // Віднімання комісії
 };
 
 const calculateEuroToUsdt = (num, percent) => {
-	return num * percent;
+	const numBD = new bigDecimal(num);
+	const percentBD = new bigDecimal(percent);
+	return numBD.multiply(percentBD).getValue(); // Множення
 };
+
+const calculateUsdtToEuro = (num, percent) => {
+	if (percent === 0) return 0;
+	const numBD = new bigDecimal(num);
+	const percentBD = new bigDecimal(percent);
+	return numBD.multiply(percentBD).getValue(); // Ділення
+};
+
 const calculateDifference = (num1, num2) => {
-	return num1 - num2;
+	const num1BD = new bigDecimal(num1);
+	const num2BD = new bigDecimal(num2);
+	return num1BD.subtract(num2BD).getValue(); // Віднімання
 };
 // const headers = ref([
 // 	'Fiat Acceptance from Client',
@@ -80,7 +107,8 @@ const mockDataLikeProps = reactive([
 		header: 'Fiat Acceptance from Client',
 		value: 'Przelew bankowy',
 		noEditable: false,
-		input_type: 'text',
+		input_type: 'select',
+		select_options: ['Bank transfer', 'Cash', 'Voucher'],
 		action: null,
 	},
 	{
@@ -118,27 +146,29 @@ const mockDataLikeProps = reactive([
 	{
 		id: 6,
 		header: 'Deposited Currency Amount',
-		value: 10000,
+		value: 0,
 		noEditable: false,
 		input_type: 'number',
 		action: calculateRateFromPlnToEur,
 		dependsOn: [6, 10],
 		target: 11,
+		focus: true,
 	},
 	{
 		id: 7,
 		header: 'Client Reference Number',
 		value: '-----',
 		noEditable: false,
-		input_type: 'string',
+		input_type: 'text',
 		action: null,
 	},
 	{
 		id: 8,
 		header: 'Client Type (Individual/Business)',
-		value: 'indywidualny',
+		value: 'Individual',
 		noEditable: false,
-		input_type: 'checkbox',
+		input_type: 'select',
+		select_options: ['Individual', 'business'],
 		action: null,
 	},
 	{
@@ -230,6 +260,205 @@ const mockDataLikeProps = reactive([
 		action: calculateDifference,
 		dependsOn: [11, 13],
 		target: 18,
+	},
+	// {
+	// 	id: 4,
+	// 	header: 'num 1',
+	// 	value: 10,
+	// 	noEditable: false,
+	// 	input_type: 'number',
+	// 	action: sumFunction, // Функція для @input
+	// 	dependsOn: [3, 4],
+	// 	target: 5,
+	// },
+	// {
+	// 	id: 5,
+	// 	header: 'num 2',
+	// 	value: 20,
+	// 	noEditable: false,
+	// 	input_type: 'number',
+	// 	action: sumFunction, // Функція для @input
+	// 	dependsOn: [3, 4],
+	// 	target: 5,
+	// },
+	// {
+	// 	id: 5,
+	// 	header: 'sum 1 & 2',
+	// 	value: 0,
+	// 	noEditable: true,
+	// 	input_type: 'number',
+	// },
+]);
+
+const mockDataLikeProps2 = reactive([
+	{
+		id: 1,
+		header: 'Acceptance of Crypto from a customer',
+		value: 'Crypto transfer',
+		noEditable: false,
+		input_type: 'select',
+		select_options: ['Crypto transfer'],
+		action: null,
+	},
+	{
+		id: 2,
+		header: 'Date',
+		value: '10.02.2025',
+		noEditable: false,
+		input_type: 'text',
+		action: setDate, // Функція для @click
+	},
+	{
+		id: 3,
+		header: 'Transaction Reference Number',
+		value: '№12345',
+		noEditable: false,
+		input_type: 'text',
+		action: null,
+	},
+	{
+		id: 4,
+		header: 'Wallet No.',
+		value: 'XXX',
+		noEditable: false,
+		input_type: 'text',
+		action: null,
+	},
+	{
+		id: 5,
+		header: 'Type of crypto deposited',
+		value: 'USDT',
+		noEditable: false,
+		input_type: 'text',
+		action: null,
+	},
+	{
+		id: 6,
+		header: 'Amount of crypto deposited',
+		value: 0,
+		noEditable: false,
+		input_type: 'number',
+		action: calculateUsdtToEuro,
+		dependsOn: [6, 10],
+		target: 11,
+		focus: true,
+	},
+	{
+		id: 7,
+		header: 'Client Reference Number',
+		value: '-----',
+		noEditable: false,
+		input_type: 'text',
+		action: null,
+	},
+	{
+		id: 8,
+		header: 'Client Type (Individual/Business)',
+		value: 'Individual',
+		noEditable: false,
+		input_type: 'select',
+		select_options: ['Individual', 'business'],
+		action: null,
+	},
+	{
+		id: 9,
+		header: 'Client Name',
+		value: 'Borys',
+		noEditable: false,
+		input_type: 'text',
+		action: null,
+	},
+	{
+		id: 10,
+		header: "Wanda's exchange rate on the euro",
+		value: 0.95,
+		noEditable: false,
+		input_type: 'number',
+		action: calculateUsdtToEuro,
+		dependsOn: [6, 10],
+		target: 11,
+	},
+	{
+		id: 11,
+		header: 'Euro Amount from Client',
+		value: 0,
+		noEditable: true,
+		input_type: 'number',
+		action: calculateCommission,
+		dependsOn: [11, 12],
+		target: 13,
+	},
+	{
+		id: 12,
+		header: 'Commission %',
+		value: 1,
+		noEditable: false,
+		input_type: 'number',
+		action: calculateCommission,
+		dependsOn: [11, 12],
+		target: 13,
+	},
+	{
+		id: 13,
+		header: 'Euro Sold After Commission',
+		value: 0,
+		noEditable: true,
+		input_type: 'number',
+		action: calculateRateFromEurToPln,
+		dependsOn: [13, 17],
+		target: 18,
+	},
+	{
+		id: 14,
+		header: 'Type of final operation for the customer',
+		value: 'Transfer',
+		noEditable: false,
+		input_type: 'text',
+		action: null,
+	},
+	{
+		id: 15,
+		header: "Customer's target currency",
+		value: 'PLN',
+		noEditable: false,
+		input_type: 'text',
+		action: null,
+	},
+	{
+		id: 16,
+		header: 'Exchange Rate to Euro / Euro Rate',
+		value: 4.14,
+		noEditable: false,
+		input_type: 'number',
+		action: calculateRateFromEurToPln,
+		dependsOn: [13, 16],
+		target: 17,
+	},
+	{
+		id: 17,
+		header: 'Quantity of target currency',
+		value: 0,
+		noEditable: true,
+		input_type: 'number',
+		action: null,
+	},
+	{
+		id: 18,
+		header: 'Customer account number',
+		value: 'account number',
+		noEditable: false,
+		input_type: 'text',
+		action: null,
+	},
+	{
+		id: 19,
+		header: 'Euro profit',
+		value: 0,
+		noEditable: true,
+		input_type: 'number',
+		action: calculateDifference,
+		dependsOn: [11, 13],
+		target: 19,
 	},
 	// {
 	// 	id: 4,

@@ -1,6 +1,6 @@
 <template>
 	<div class="p-4">
-		<h2 class="text-lg font-bold mb-4">Редагована таблиця</h2>
+		<h2 class="text-lg font-bold mb-4">Fiat Table {{ props.tableName }}</h2>
 
 		<!-- Таблиця -->
 		<table class="border-collapse border w-full">
@@ -16,19 +16,32 @@
 					<td v-for="(row, rowIndex) in props.tableData" :key="rowIndex">
 						<span>id: {{ row.id }}</span>
 						<input
+							v-if="row.input_type === 'text' || row.input_type === 'number'"
 							:type="row.input_type"
 							v-model="row.value"
 							:disabled="row.noEditable"
 							@input="handleInput(row)"
 							@click="handleClick(row)"
+							:focus="row.focus"
 						/>
+						<select
+							v-else-if="row.input_type === 'select' && row.select_options"
+						>
+							<option
+								v-for="option in row.select_options"
+								:value="option"
+								:key="option"
+							>
+								{{ option }}
+							</option>
+						</select>
 					</td>
 				</tr>
 			</tbody>
 		</table>
 
 		<!-- Кнопка експорту -->
-		<button @click="exportToExcel">Експортувати в Excel</button>
+		<button @click="exportToExcel">Export to Excel</button>
 	</div>
 </template>
 
@@ -183,6 +196,7 @@ th {
 	color: white;
 	font-weight: bold;
 	text-align: center;
+	min-width: 100px;
 }
 input {
 	width: 100%;
@@ -205,69 +219,3 @@ button:hover {
 	background-color: #0056b3;
 }
 </style>
-
-<!-- <template>
-	<div class="p-4">
-		<h1>Parent</h1>
-		<HelloWorld :tableData="mockDataLikeProps" />
-	</div>
-</template>
-
-<script setup>
-import HelloWorld from './components/HelloWorld.vue';
-import { reactive } from 'vue';
-
-// Функції для обчислень
-const sumFunction = (values) =>
-	values.reduce((sum, val) => sum + Number(val), 0);
-
-// Функція для встановлення нової дати
-const setDate = () => new Date().toLocaleDateString();
-
-const mockDataLikeProps = reactive([
-	{
-		id: 1,
-		header: 'Fiat Acceptance from Client',
-		value: 'Przelew bankowy',
-		noEditable: false,
-		input_type: 'text',
-		action: null,
-	},
-	{
-		id: 2,
-		header: 'Date',
-		value: '10.02.2025',
-		noEditable: false,
-		input_type: 'text',
-		action: setDate, // Функція для @click
-	},
-	{
-		id: 3,
-		header: 'num 1',
-		value: 10,
-		noEditable: false,
-		input_type: 'number',
-		action: sumFunction, // Функція для @input
-		dependsOn: [3, 4],
-		target: 5,
-	},
-	{
-		id: 4,
-		header: 'num 2',
-		value: 20,
-		noEditable: false,
-		input_type: 'number',
-		action: sumFunction, // Функція для @input
-		dependsOn: [3, 4],
-		target: 5,
-	},
-	{
-		id: 5,
-		header: 'sum 1 & 2',
-		value: 0,
-		noEditable: true,
-		input_type: 'number',
-	},
-]);
-</script>
- -->
