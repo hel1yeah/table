@@ -40,7 +40,6 @@
 			</tbody>
 		</table>
 
-		<!-- Кнопка експорту -->
 		<button @click="exportToExcel">Export to Excel</button>
 	</div>
 </template>
