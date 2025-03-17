@@ -14,22 +14,7 @@
 				<!-- Для кожного стовпця (використовуємо header-об'єкт) -->
 				<td v-for="(col, colIndex) in headers" :key="colIndex">
 					<span>{{ rowIndex }}/{{ colIndex }}</span>
-					<!-- Якщо тип "sum": обчислюємо суму за допомогою independent_on -->
-					<!-- <template v-if="col.type === 'sum'">
-						<input
-							type="number"
-							:value="computeSum(row, col.independent_on)"
-							:disabled="col.disabled"
-						/>
-					</template> -->
-					<!-- Якщо тип "formula": використовуємо функцію formula, задану в header -->
-					<!-- <template v-if="col.type === 'formula' || col.type === 'sum'">
-						<input
-							type="number"
-							:value="col.formula(row, rowIndex, colIndex)"
-							:disabled="col.disabled"
-						/>
-					</template> -->
+
 					<!-- Якщо тип "calculateRateFromPlnToEur": використовуємо функцію formula, задану в header -->
 					<template v-if="col.type === 'calculateRateFromPlnToEur'">
 						<input
@@ -113,7 +98,7 @@
 		</tbody>
 	</table>
 	<button @click="addRow">Додати рядок</button>
-	<!-- <button @click="deleteRow">Видалити рядок</button> -->
+	<button @click="deleteRow">Видалити рядок</button>
 	<!-- <button @click="console.log(rows)">log data</button> -->
 </template>
 
@@ -135,6 +120,10 @@ const emits = defineEmits(['addRow', 'deleteRow']);
 
 function addRow() {
 	emits('addRow');
+}
+
+function deleteRow() {
+	emits('deleteRow');
 }
 </script>
 

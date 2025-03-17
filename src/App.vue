@@ -2,12 +2,42 @@
 	<div class="p-4">
 		<h1>Parent</h1>
 
-		<NewTable :headers="headers1" :rows="rows1" @addRow="onAddRow(rows1)" />
-		<NewTable :headers="headers2" :rows="rows2" @addRow="onAddRow(rows2)" />
-		<NewTable :headers="headers3" :rows="rows3" @addRow="onAddRow(rows3)" />
-		<NewTable :headers="headers4" :rows="rows4" @addRow="onAddRow(rows4)" />
-		<NewTable :headers="headers5" :rows="rows5" @addRow="onAddRow(rows5)" />
-		<NewTable :headers="headers6" :rows="rows5" @addRow="onAddRow(rows6)" />
+		<NewTable
+			:headers="headers1"
+			:rows="rows1"
+			@addRow="onAddRow(rows1)"
+			@deleteRow="onDeleteRow(rows1)"
+		/>
+		<NewTable
+			:headers="headers2"
+			:rows="rows2"
+			@addRow="onAddRow(rows2)"
+			@deleteRow="onDeleteRow(rows2)"
+		/>
+		<NewTable
+			:headers="headers3"
+			:rows="rows3"
+			@addRow="onAddRow(rows3)"
+			@deleteRow="onDeleteRow(rows3)"
+		/>
+		<NewTable
+			:headers="headers4"
+			:rows="rows4"
+			@addRow="onAddRow(rows4)"
+			@deleteRow="onDeleteRow(rows4)"
+		/>
+		<NewTable
+			:headers="headers5"
+			:rows="rows5"
+			@addRow="onAddRow(rows5)"
+			@deleteRow="onDeleteRow(rows5)"
+		/>
+		<NewTable
+			:headers="headers6"
+			:rows="rows6"
+			@addRow="onAddRow(rows6)"
+			@deleteRow="onDeleteRow(rows6)"
+		/>
 
 		<!-- <HelloWorld
 			:tableData="ReceivingFiatFromCustomer"
@@ -494,7 +524,7 @@ const headers5 = reactive([
 	},
 	{
 		header_title: 'Target currency type',
-		type: 'number',
+		type: 'EUR',
 		disabled: false,
 	},
 	{
@@ -594,30 +624,55 @@ function onAddRow(arr) {
 	arr.push([...arr[arr.length - 1]]);
 }
 
+function onDeleteRow(arr) {
+	if (arr.length === 1) return;
+	arr.pop();
+}
+
 const exportToExcel = () => {
-	// Перший заголовок та дані
-	const headersArr = headers1.map((item) => item.header_title);
-	const data = rows1.value.map((row) => [...row]);
-
-	// Другий заголовок та дані
-	const headersArr1 = headers2.map((item) => item.header_title);
-	const data1 = rows2.value.map((row) => [...row]);
-
-	// Об'єднуємо дані: перший блок, порожній рядок, другий блок
-	const formattedData = [
-		headersArr,
-		...data,
-		[], // порожній рядок як роздільник
-		headersArr1,
-		...data1,
+	const headersArray = [
+		headers1,
+		headers2,
+		headers3,
+		headers4,
+		headers5,
+		headers6,
 	];
+
+	const rowsArray = [
+		rows1.value,
+		rows2.value,
+		rows3.value,
+		rows4.value,
+		rows5.value,
+		rows6.value,
+	];
+
+	const formattedData = [];
+
+	for (let index = 0; index < headersArray.length; index++) {
+		formattedData.push(
+			headersArray[index].map((header) => header.header_title)
+		);
+		formattedData.push(...rowsArray[index]);
+		formattedData.push([]);
+	}
 
 	// Створюємо робочий лист із форматованими даними
 	const ws = XLSX.utils.aoa_to_sheet(formattedData);
 
+	const findMaxLength = headersArray.reduce((acc, arr) => {
+		return acc > arr.length ? acc : arr.length;
+	}, 0);
+
 	// Встановлюємо мінімальну ширину стовпців
 	const minWidth = 20;
-	const colWidths = headersArr.map(() => ({ wch: minWidth }));
+	const colWidths = [];
+
+	for (let index = 0; index < findMaxLength; index++) {
+		colWidths.push({ wch: minWidth });
+	}
+
 	ws['!cols'] = colWidths;
 
 	// Отримуємо діапазон використання листа
@@ -625,13 +680,8 @@ const exportToExcel = () => {
 
 	// Задаємо висоту для заголовкових рядків (наприклад, 45 пунктів)
 	// Створюємо або оновлюємо масив рядків ws['!rows']
-	ws['!rows'] = ws['!rows'] || [];
-	// Перший заголовковий рядок — індекс 0
-	ws['!rows'][0] = { hpt: 45, customHeight: true };
+	// ws['!rows'] = ws['!rows'] || [];
 	// Другий заголовковий рядок — знаходимо його індекс: 1 (headersArr) + data.length + 1 (порожній рядок)
-	const secondHeaderRow = data.length + 2;
-	ws['!rows'][secondHeaderRow] = { hpt: 40, customHeight: true };
-
 	// Функція для стилізації заголовкових рядків
 	const styleHeaderRow = (r) => {
 		for (let C = range.s.c; C <= range.e.c; ++C) {
@@ -660,10 +710,28 @@ const exportToExcel = () => {
 		}
 	};
 
-	// Стилізуємо перший заголовковий рядок (рядок 0)
-	styleHeaderRow(0);
-	// Стилізуємо другий заголовковий рядок (індекс secondHeaderRow)
-	styleHeaderRow(secondHeaderRow);
+	for (let index = 0; index < formattedData.length; index++) {
+		ws['!rows'] = ws['!rows'] || [];
+		if (index === 0) {
+			// Перший заголовковий рядок — індекс 0
+
+			ws['!rows'][index] = { hpt: 45, customHeight: true };
+
+			// Стилізуємо перший заголовковий рядок (рядок 0)
+			styleHeaderRow(index);
+		}
+
+		if (formattedData[index].length === 0) {
+			// Стилізуємо інші (індекс)
+			// styleHeaderRow(index + 1);
+			if (formattedData[index + 1]) {
+				ws['!rows'][index + 1] = { hpt: 40, customHeight: true };
+				styleHeaderRow(index + 1);
+			}
+		}
+	}
+
+	// return;
 
 	// Створюємо книгу та додаємо лист
 	const wb = XLSX.utils.book_new();
@@ -679,48 +747,6 @@ const exportToExcel = () => {
 	saveAs(blob, 'TABLE_NAME.xlsx');
 };
 
-const setDate = () => new Date().toLocaleDateString();
-
-const calculateRateFromPlnToEurAld = (divided, divisor) => {
-	const dividedBD = new bigDecimal(divided);
-	const divisorBD = new bigDecimal(divisor);
-	const res = dividedBD.divide(divisorBD, 5).getValue(); // Ділення з точністю до 10 знаків після коми
-	return res;
-};
-
-const calculateRateFromEurToPln = (divided, divisor) => {
-	const dividedBD = new bigDecimal(divided);
-	const divisorBD = new bigDecimal(divisor);
-	return dividedBD.multiply(divisorBD).getValue(); // множення
-};
-
-const calculateCommission2 = (num, percent) => {
-	const numBD = new bigDecimal(num);
-	const percentBD = new bigDecimal(percent);
-	const commission = numBD.multiply(percentBD).divide(new bigDecimal(100), 10);
-	return numBD.subtract(commission).getValue(); // Віднімання комісії
-};
-
-const calculateEuroToUsdt = (num, percent) => {
-	const numBD = new bigDecimal(num);
-	const percentBD = new bigDecimal(percent);
-	return numBD.multiply(percentBD).getValue(); // Множення
-};
-
-const calculateUsdtToEuro = (num, percent) => {
-	if (percent === 0) return 0;
-	const numBD = new bigDecimal(num);
-	const percentBD = new bigDecimal(percent);
-	return numBD.multiply(percentBD).getValue(); // Ділення
-};
-
-const calculateDifference = (num1, num2) => {
-	const num1BD = new bigDecimal(num1);
-	const num2BD = new bigDecimal(num2);
-	return num1BD.subtract(num2BD).getValue(); // Віднімання
-};
-
-// const ReceivingFiatFromCustomer = reactive([
 // 	{
 // 		header: 'Fiat Acceptance from Client',
 // 		id: 1,
