@@ -3,11 +3,16 @@
 		<h1>Parent</h1>
 
 		<NewTable :headers="headers1" :rows="rows1" @addRow="onAddRow(rows1)" />
+		<NewTable :headers="headers2" :rows="rows2" @addRow="onAddRow(rows2)" />
+		<NewTable :headers="headers3" :rows="rows3" @addRow="onAddRow(rows3)" />
+		<NewTable :headers="headers4" :rows="rows4" @addRow="onAddRow(rows4)" />
+		<NewTable :headers="headers5" :rows="rows5" @addRow="onAddRow(rows5)" />
+		<NewTable :headers="headers6" :rows="rows5" @addRow="onAddRow(rows6)" />
 
-		<HelloWorld
+		<!-- <HelloWorld
 			:tableData="ReceivingFiatFromCustomer"
 			:tableName="'ReceivingFiatFromCustomer'"
-		/>
+		/> -->
 		<!-- @updateDataTable="updateDataTable" -->
 		<!-- <MyExchangeTable /> -->
 		<!-- <HelloWorld
@@ -24,7 +29,7 @@
 			:tableName="'BringingOutYourOwnForFiat'"
 		/> -->
 
-		<button @click="exportToExcel">export to excel</button>
+		<button class="primary" @click="exportToExcel">export to excel</button>
 	</div>
 </template>
 
@@ -64,34 +69,41 @@ function calculateRateFromPlnToEur(rows1, row, indices, rowIndex, colIndex) {
 }
 // subtractingPercentageFromAmount
 function subtractingPercentageFromAmount(
-	rows1,
+	rows,
 	row,
 	indices,
 	rowIndex,
 	colIndex
 ) {
+	'use strict';
 	const numBD = new bigDecimal(row[indices[0]]);
 	const percentBD = new bigDecimal(row[indices[1]]);
 	const commission = numBD.multiply(percentBD).divide(new bigDecimal(100), 10); // multiply множення а потім ділення
 	const res = numBD.subtract(commission).getValue(); // Віднімання комісії
-	rows1.value[rowIndex][colIndex] = res;
+	rows.value[rowIndex][colIndex] = res;
 	return res;
 }
 
-function calculateSoldCryptoAmount(rows1, row, indices, rowIndex, colIndex) {
+function calculateMultiplicationByPurely(
+	rows,
+	row,
+	indices,
+	rowIndex,
+	colIndex
+) {
 	const num = new bigDecimal(row[indices[0]]);
 	const percent = new bigDecimal(row[indices[1]]);
 
 	const res = num.multiply(percent).getValue();
-	rows1.value[rowIndex][colIndex] = res;
+	rows.value[rowIndex][colIndex] = res;
 	return res;
 }
 
-function calculateSubtract(rows1, row, indices, rowIndex, colIndex) {
+function calculateSubtract(rows, row, indices, rowIndex, colIndex) {
 	const num1BD = new bigDecimal(row[indices[0]]);
 	const num2BD = new bigDecimal(row[indices[1]]);
 	const res = num1BD.subtract(num2BD).getValue(); // Віднімання
-	rows1.value[rowIndex][colIndex] = res;
+	rows.value[rowIndex][colIndex] = res;
 	return res;
 }
 
@@ -165,9 +177,9 @@ const headers1 = reactive([
 	{ header_title: 'Crypto Rate from Wanda', type: 'number', disabled: false },
 	{
 		header_title: 'Sold Crypto Amount',
-		type: 'calculateSoldCryptoAmount',
+		type: 'calculateMultiplicationByPurely',
 		formula: (row, rowIndex, colIndex) =>
-			calculateSoldCryptoAmount(rows1, row, [12, 14], rowIndex, colIndex),
+			calculateMultiplicationByPurely(rows1, row, [12, 14], rowIndex, colIndex),
 		independent_on: [12, 14],
 		disabled: true,
 	},
@@ -184,31 +196,6 @@ const headers1 = reactive([
 		independent_on: [10, 12],
 		disabled: true,
 	},
-	// { header_title: 'two', type: 'number', disabled: false },
-	// {
-	// 	header_title: 'Сумма двух чисел',
-	// 	type: 'sum',
-	// 	formula: (row, rowIndex, colIndex) =>
-	// 		computeSum(rows1, row, [0, 1], rowIndex, colIndex),
-	// 	independent_on: [0, 1],
-	// 	disabled: true,
-	// },
-	// Приклад колонки, що використовує формулу, яка базується на значенні "sum"
-	// {
-	// 	header_title: 'Double Sum',
-	// 	type: 'formula',
-	// 	formula: (row, rowIndex, colIndex) =>
-	// 		computeSumDouble(rows1, row, [1, 2], rowIndex, colIndex),
-	// 	disabled: true,
-	// },
-	// { header_title: 'data', type: 'date', disabled: false },
-	// {
-	// 	header_title: 'select',
-	// 	type: 'select',
-	// 	options: ['option1', 'option2', 'option3'],
-	// 	disabled: false,
-	// },
-	// { header_title: 'red bull', type: 'text', disabled: false },
 ]);
 
 const rows1 = ref([
@@ -234,30 +221,373 @@ const rows1 = ref([
 	],
 ]);
 const headers2 = reactive([
-	{ header_title: 'one', type: 'number', disabled: false },
-	{ header_title: 'two', type: 'number', disabled: false },
 	{
-		header_title: 'Сумма двух чисел',
-		type: 'sum',
+		header_title: 'Acceptance of Crypto from a customer',
+		type: 'select',
+		options: ['Crypto transfer'],
+		disabled: false,
+	},
+	{
+		header_title: 'Date',
+		type: 'date',
+		disabled: false,
+	},
+	{
+		header_title: 'Transaction Reference Number',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Number of finalists',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Type of crypto deposited',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Amount of crypto deposited',
+		type: 'number',
+		disabled: false,
+	},
+	{
+		header_title: 'Customer registration number',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Customer type',
+		type: 'select',
+		options: ['Individual', 'Business'],
+		disabled: false,
+	},
+	{
+		header_title: 'Client Name',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: "Wanda's exchange rate on the euro",
+		type: 'number',
+		disabled: false,
+	},
+	{
+		header_title: 'Amount of Euros from the customer',
+		type: 'calculateRateFromPlnToEur',
 		formula: (row, rowIndex, colIndex) =>
-			computeSum(rows1, row, [0, 1], rowIndex, colIndex),
-		independent_on: [0, 1],
+			calculateMultiplicationByPurely(rows2, row, [5, 9], rowIndex, colIndex),
+		independent_on: [5, 9],
 		disabled: true,
 	},
-	// Приклад колонки, що використовує формулу, яка базується на значенні "sum"
 	{
-		header_title: 'Double Sum',
-		type: 'formula',
+		header_title: 'Commission %',
+		type: 'number',
+		disabled: false,
+	},
+	{
+		header_title: 'Euro Sold After Commission',
+		type: 'subtractingPercentageFromAmount',
 		formula: (row, rowIndex, colIndex) =>
-			computeSumDouble(rows1, row, [1, 2], rowIndex, colIndex),
+			subtractingPercentageFromAmount(rows2, row, [10, 11], rowIndex, colIndex),
+		independent_on: [10, 11],
 		disabled: true,
 	},
-	{ header_title: 'data', type: 'date', disabled: false },
+	{
+		header_title: 'Type of final operation for the customer',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: "Customer's target currency",
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Target currency exchange rate',
+		type: 'number',
+		disabled: false,
+	},
+	{
+		header_title: 'Amount of target currency',
+		type: 'calculateRateFromPlnToEur',
+		formula: (row, rowIndex, colIndex) =>
+			calculateMultiplicationByPurely(rows2, row, [12, 15], rowIndex, colIndex),
+		independent_on: [12, 15],
+		disabled: true,
+	},
+	{
+		header_title: 'Customer account number',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Profit',
+		type: 'profit',
+		formula: (row, rowIndex, colIndex) =>
+			calculateSubtract(rows2, row, [10, 12], rowIndex, colIndex),
+		independent_on: [10, 12],
+		disabled: true,
+	},
 ]);
 
 const rows2 = ref([
-	[2, 3, '', '', '2025-03-07'],
-	[2, 3, '', '', '2025-03-07'],
+	[
+		'Crypto transfer',
+		'2025-03-07',
+		'№12345',
+		'Number of finalists',
+		'USDT',
+		10000,
+		'-',
+		'Business',
+		'Client Name',
+		0.95,
+		0,
+		1,
+		0,
+		'Transfer',
+		'PLN',
+		4.14,
+		'#123',
+		0,
+	],
+]);
+
+const headers3 = reactive([
+	{
+		header_title: 'Adopt your own Fiat',
+		type: 'select',
+		options: ['Bank transfer'],
+		disabled: false,
+	},
+	{
+		header_title: 'Date',
+		type: 'date',
+		disabled: false,
+	},
+	{
+		header_title: 'Transaction Reference Number',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Bank name/ type of operation/cash',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Type of currency deposited',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Amount of currency deposited',
+		type: 'number',
+		disabled: false,
+	},
+	{
+		header_title: 'Customer registration number',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Origin / name of the exchange office',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Data of the depositor',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Target place of deposit',
+		type: 'text',
+		disabled: false,
+	},
+]);
+
+const rows3 = ref([
+	[
+		'Bank transfer',
+		'2025-03-07',
+		'#123',
+		'Bank transfer',
+		'PLN',
+		0,
+		'#123',
+		'Bank Reference',
+		'Data of the depositor',
+		'Target place of deposit',
+	],
+]);
+
+const headers4 = reactive([
+	{
+		header_title: 'Account balance',
+		type: 'number',
+		disabled: false,
+	},
+	{
+		header_title: 'operation number',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'type of operation',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Currency type',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Amount of currency',
+		type: 'number',
+		disabled: false,
+	},
+	{
+		header_title: 'Place of appreciation(san, wanda, checkout, etc.).',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Course (informational)',
+		type: 'number',
+		disabled: false,
+	},
+]);
+
+const rows4 = ref([
+	[0, '#123', 'type', 'currency', 0, 'Place of appreciation', 0],
+]);
+
+const headers5 = reactive([
+	{
+		header_title: 'Currency conversion of your own Fiat',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Date',
+		type: 'date',
+		disabled: false,
+	},
+	{
+		header_title: 'Transaction Reference Number',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Type of initial currency',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Amount of initial currency',
+		type: 'number',
+		disabled: false,
+	},
+	{
+		header_title: 'Target currency type',
+		type: 'number',
+		disabled: false,
+	},
+	{
+		header_title: 'Target currency exchange rate',
+		type: 'number',
+		disabled: false,
+	},
+	{
+		header_title: 'Amount of target currency',
+		type: 'calculateRateFromPlnToEur',
+		formula: (row, rowIndex, colIndex) =>
+			calculateRateFromPlnToEur(rows5, row, [4, 6], rowIndex, colIndex),
+		independent_on: [4, 6],
+		disabled: true,
+	},
+	{
+		header_title: 'Supply location',
+		type: 'text',
+		disabled: false,
+	},
+]);
+
+const rows5 = ref([
+	['Currency', '2025-03-07', '#123', 'PLN', 0, 'EUR', 4.14, 0, 'Wanda'],
+]);
+
+const headers6 = reactive([
+	{
+		header_title: 'Bringing out your own for Fiat',
+		type: 'select',
+		options: ['Bank transfer'],
+		disabled: false,
+	},
+	{
+		header_title: 'Date',
+		type: 'date',
+		disabled: false,
+	},
+	{
+		header_title: 'Transaction Reference Number',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Name of bank/type of operation',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Type of currency paid out',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Amount of currency paid out',
+		type: 'number',
+		disabled: false,
+	},
+	{
+		header_title: 'Rate of currency paid out',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Target payout location',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Origin/name of the exchange office',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Data of the paying agent',
+		type: 'text',
+		disabled: false,
+	},
+]);
+
+const rows6 = ref([
+	[
+		'Bank transfer',
+		'2025-03-07',
+		'#123',
+		'Bank name',
+		'EUR',
+		0,
+		4.14,
+		'Cash',
+		'Wanda',
+		'M Głuchowska',
+	],
 ]);
 
 function onAddRow(arr) {
@@ -300,7 +630,7 @@ const exportToExcel = () => {
 	ws['!rows'][0] = { hpt: 45, customHeight: true };
 	// Другий заголовковий рядок — знаходимо його індекс: 1 (headersArr) + data.length + 1 (порожній рядок)
 	const secondHeaderRow = data.length + 2;
-	ws['!rows'][secondHeaderRow] = { hpt: 45, customHeight: true };
+	ws['!rows'][secondHeaderRow] = { hpt: 40, customHeight: true };
 
 	// Функція для стилізації заголовкових рядків
 	const styleHeaderRow = (r) => {
@@ -312,10 +642,14 @@ const exportToExcel = () => {
 			ws[cellAddress].s.font = {
 				bold: true,
 				color: { rgb: 'FF000000' },
+				name: 'Arial',
+				size: 14,
 			};
 			ws[cellAddress].s.alignment = {
 				horizontal: 'center',
 				vertical: 'center',
+				wrapText: true,
+				shrinkToFit: true,
 			};
 			ws[cellAddress].s.border = {
 				top: { style: 'medium', color: { rgb: 'FF000000' } },
@@ -386,165 +720,177 @@ const calculateDifference = (num1, num2) => {
 	return num1BD.subtract(num2BD).getValue(); // Віднімання
 };
 
-const ReceivingFiatFromCustomer = reactive([
-	{
-		header: 'Fiat Acceptance from Client',
-		id: 1,
-		value: 'Przelew bankowy',
-		noEditable: false,
-		input_type: 'select',
-		select_options: ['Bank transfer', 'Cash', 'Voucher'],
-		action: null,
-	},
-	{
-		id: 2,
-		header: 'Date',
-		value: '10.02.2025',
-		noEditable: false,
-		input_type: 'text',
-		action: setDate, // Функція для @click
-	},
-	{
-		id: 3,
-		header: 'Transaction Reference Number',
-		value: '№12345',
-		noEditable: false,
-		input_type: 'text',
-		action: null,
-	},
-	{
-		id: 4,
-		header: 'Bank Name / Transaction Type / Cash Voucher',
-		value: 'PKO',
-		noEditable: false,
-		input_type: 'text',
-		action: null,
-	},
-	{
-		id: 5,
-		header: 'Deposited Currency Type',
-		value: 'PLN',
-		noEditable: false,
-		input_type: 'text',
-		action: null,
-	},
-	{
-		id: 6,
-		header: 'Deposited Currency Amount',
-		value: 10000,
-		noEditable: false,
-		input_type: 'number',
-		action: calculateRateFromPlnToEurAld,
-		dependsOn: [6, 10],
-		target: 11,
-		focus: true,
-	},
-	{
-		id: 7,
-		header: 'Client Reference Number',
-		value: '-----',
-		noEditable: false,
-		input_type: 'text',
-		action: null,
-	},
-	{
-		id: 8,
-		header: 'Client Type (Individual/Business)',
-		value: 'Individual',
-		noEditable: false,
-		input_type: 'select',
-		select_options: ['Individual', 'business'],
-		action: null,
-	},
-	{
-		id: 9,
-		header: 'Client Name',
-		value: 'Borys',
-		noEditable: false,
-		input_type: 'text',
-		action: null,
-	},
-	{
-		id: 10,
-		header: 'Exchange Rate to Euro / Euro Rate',
-		value: 4.14,
-		noEditable: false,
-		input_type: 'number',
-		action: calculateRateFromPlnToEurAld,
-		dependsOn: [6, 10],
-		target: 11,
-	},
-	{
-		id: 11,
-		header: 'Euro Amount from Client',
-		value: 0,
-		noEditable: true,
-		input_type: 'number',
-		action: calculateCommission2,
-		dependsOn: [11, 12],
-		target: 13,
-	},
-	{
-		id: 12,
-		header: 'Commission %',
-		value: 1,
-		noEditable: false,
-		input_type: 'number',
-		action: calculateCommission2,
-		dependsOn: [11, 12],
-		target: 13,
-	},
-	{
-		id: 13,
-		header: 'Euro Sold After Commission',
-		value: 0,
-		noEditable: true,
-		input_type: 'number',
-		action: null,
-	},
-	{
-		id: 14,
-		header: 'Sold Crypto Type',
-		value: 'USDT',
-		noEditable: false,
-		input_type: 'text',
-		action: null,
-	},
-	{
-		id: 15,
-		header: 'Crypto Rate from Wanda',
-		value: 1.04,
-		noEditable: false,
-		input_type: 'number',
-		action: calculateEuroToUsdt,
-		dependsOn: [13, 15],
-		target: 16,
-	},
-	{
-		id: 16,
-		header: 'Sold Crypto Amount',
-		value: 0,
-		noEditable: true,
-		input_type: 'number',
-		action: null,
-	},
-	{
-		id: 17,
-		header: 'Wallet Number',
-		value: '1e12e1l;m1j21ioud1u01nd02d1nu0',
-		noEditable: false,
-		input_type: 'text',
-		action: null,
-	},
-	{
-		id: 18,
-		header: 'Profit',
-		value: '0',
-		noEditable: true,
-		input_type: 'number',
-		action: calculateDifference,
-		dependsOn: [11, 13],
-		target: 18,
-	},
-]);
+// const ReceivingFiatFromCustomer = reactive([
+// 	{
+// 		header: 'Fiat Acceptance from Client',
+// 		id: 1,
+// 		value: 'Przelew bankowy',
+// 		noEditable: false,
+// 		input_type: 'select',
+// 		select_options: ['Bank transfer', 'Cash', 'Voucher'],
+// 		action: null,
+// 	},
+// 	{
+// 		id: 2,
+// 		header: 'Date',
+// 		value: '10.02.2025',
+// 		noEditable: false,
+// 		input_type: 'text',
+// 		action: setDate, // Функція для @click
+// 	},
+// 	{
+// 		id: 3,
+// 		header: 'Transaction Reference Number',
+// 		value: '№12345',
+// 		noEditable: false,
+// 		input_type: 'text',
+// 		action: null,
+// 	},
+// 	{
+// 		id: 4,
+// 		header: 'Bank Name / Transaction Type / Cash Voucher',
+// 		value: 'PKO',
+// 		noEditable: false,
+// 		input_type: 'text',
+// 		action: null,
+// 	},
+// 	{
+// 		id: 5,
+// 		header: 'Deposited Currency Type',
+// 		value: 'PLN',
+// 		noEditable: false,
+// 		input_type: 'text',
+// 		action: null,
+// 	},
+// 	{
+// 		id: 6,
+// 		header: 'Deposited Currency Amount',
+// 		value: 10000,
+// 		noEditable: false,
+// 		input_type: 'number',
+// 		action: calculateRateFromPlnToEurAld,
+// 		dependsOn: [6, 10],
+// 		target: 11,
+// 		focus: true,
+// 	},
+// 	{
+// 		id: 7,
+// 		header: 'Client Reference Number',
+// 		value: '-----',
+// 		noEditable: false,
+// 		input_type: 'text',
+// 		action: null,
+// 	},
+// 	{
+// 		id: 8,
+// 		header: 'Client Type (Individual/Business)',
+// 		value: 'Individual',
+// 		noEditable: false,
+// 		input_type: 'select',
+// 		select_options: ['Individual', 'business'],
+// 		action: null,
+// 	},
+// 	{
+// 		id: 9,
+// 		header: 'Client Name',
+// 		value: 'Borys',
+// 		noEditable: false,
+// 		input_type: 'text',
+// 		action: null,
+// 	},
+// 	{
+// 		id: 10,
+// 		header: 'Exchange Rate to Euro / Euro Rate',
+// 		value: 4.14,
+// 		noEditable: false,
+// 		input_type: 'number',
+// 		action: calculateRateFromPlnToEurAld,
+// 		dependsOn: [6, 10],
+// 		target: 11,
+// 	},
+// 	{
+// 		id: 11,
+// 		header: 'Euro Amount from Client',
+// 		value: 0,
+// 		noEditable: true,
+// 		input_type: 'number',
+// 		action: calculateCommission2,
+// 		dependsOn: [11, 12],
+// 		target: 13,
+// 	},
+// 	{
+// 		id: 12,
+// 		header: 'Commission %',
+// 		value: 1,
+// 		noEditable: false,
+// 		input_type: 'number',
+// 		action: calculateCommission2,
+// 		dependsOn: [11, 12],
+// 		target: 13,
+// 	},
+// 	{
+// 		id: 13,
+// 		header: 'Euro Sold After Commission',
+// 		value: 0,
+// 		noEditable: true,
+// 		input_type: 'number',
+// 		action: null,
+// 	},
+// 	{
+// 		id: 14,
+// 		header: 'Sold Crypto Type',
+// 		value: 'USDT',
+// 		noEditable: false,
+// 		input_type: 'text',
+// 		action: null,
+// 	},
+// 	{
+// 		id: 15,
+// 		header: 'Crypto Rate from Wanda',
+// 		value: 1.04,
+// 		noEditable: false,
+// 		input_type: 'number',
+// 		action: calculateEuroToUsdt,
+// 		dependsOn: [13, 15],
+// 		target: 16,
+// 	},
+// 	{
+// 		id: 16,
+// 		header: 'Sold Crypto Amount',
+// 		value: 0,
+// 		noEditable: true,
+// 		input_type: 'number',
+// 		action: null,
+// 	},
+// 	{
+// 		id: 17,
+// 		header: 'Wallet Number',
+// 		value: '1e12e1l;m1j21ioud1u01nd02d1nu0',
+// 		noEditable: false,
+// 		input_type: 'text',
+// 		action: null,
+// 	},
+// 	{
+// 		id: 18,
+// 		header: 'Profit',
+// 		value: '0',
+// 		noEditable: true,
+// 		input_type: 'number',
+// 		action: calculateDifference,
+// 		dependsOn: [11, 13],
+// 		target: 18,
+// 	},
+// ]);
 </script>
+
+<style lang="css">
+.primary {
+	margin-top: 100px;
+	color: #42b883;
+	padding: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: bold;
+}
+</style>

@@ -1,5 +1,4 @@
 <template>
-	{{ rows }}
 	<table border="1" cellspacing="0" cellpadding="5">
 		<thead>
 			<tr>
@@ -39,6 +38,14 @@
 							:disabled="col.disabled"
 						/>
 					</template>
+					<!-- Якщо тип "subtractingPercentageFromAmount": використовуємо функцію formula, задану в header -->
+					<template v-else-if="col.type === 'subtractingPercentageFromAmount'">
+						<input
+							type="number"
+							:value="col.formula(row, rowIndex, colIndex)"
+							:disabled="col.disabled"
+						/>
+					</template>
 					<!-- Якщо тип "calculateCommission": використовуємо функцію formula, задану в header -->
 					<template v-else-if="col.type === 'calculateCommission'">
 						<input
@@ -47,8 +54,8 @@
 							:disabled="col.disabled"
 						/>
 					</template>
-					<!-- Якщо тип "calculateSoldCryptoAmount": використовуємо функцію formula, задану в header -->
-					<template v-else-if="col.type === 'calculateSoldCryptoAmount'">
+					<!-- Якщо тип "calculateMultiplicationByPurely": використовуємо функцію formula, задану в header -->
+					<template v-else-if="col.type === 'calculateMultiplicationByPurely'">
 						<input
 							type="number"
 							:value="col.formula(row, rowIndex, colIndex)"
@@ -89,7 +96,7 @@
 							type="number"
 							v-model.number="row[colIndex]"
 							:disabled="col.disabled"
-							placeholder="Введіть значення"
+							placeholder="Enter the value"
 						/>
 					</template>
 					<!-- За замовчуванням (тип "text"): input типу text -->
@@ -98,7 +105,7 @@
 							type="text"
 							v-model="row[colIndex]"
 							:disabled="col.disabled"
-							placeholder="Введіть значення"
+							placeholder="Enter the value"
 						/>
 					</template>
 				</td>
@@ -107,11 +114,11 @@
 	</table>
 	<button @click="addRow">Додати рядок</button>
 	<!-- <button @click="deleteRow">Видалити рядок</button> -->
-	<button @click="console.log(rows)">log data</button>
+	<!-- <button @click="console.log(rows)">log data</button> -->
 </template>
 
 <script setup>
-import { ref, reactive, defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits } from 'vue';
 
 const props = defineProps({
 	headers: {
@@ -150,6 +157,7 @@ th {
 	min-height: 30px;
 	height: 70px;
 	padding: 10px;
+	min-width: 200px;
 }
 
 td span {
@@ -162,9 +170,11 @@ td span {
 td input {
 	width: fit-content;
 	padding: 10px 20px;
+	width: -webkit-fill-available;
 }
 td input:disabled {
 	width: fit-content;
+	width: -webkit-fill-available;
 	padding: 10px 20px;
 	background-color: rgba(204, 204, 204, 0.288);
 }
