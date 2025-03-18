@@ -59,7 +59,7 @@
 			:tableName="'BringingOutYourOwnForFiat'"
 		/> -->
 
-		<button class="primary" @click="exportToExcel">export to excel</button>
+		<button class="primary" @click="exportToExcel">Export to excel</button>
 	</div>
 </template>
 

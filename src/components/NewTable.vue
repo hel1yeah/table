@@ -97,8 +97,8 @@
 			</tr>
 		</tbody>
 	</table>
-	<button @click="addRow">Додати рядок</button>
-	<button @click="deleteRow">Видалити рядок</button>
+	<button @click="addRow">Add Row</button>
+	<button @click="deleteRow">Remove Row</button>
 	<!-- <button @click="console.log(rows)">log data</button> -->
 </template>
 
