@@ -137,76 +137,568 @@ function calculateSubtract(rows, row, indices, rowIndex, colIndex) {
 	return res;
 }
 
+// const headers1 = reactive([
+// 	{
+// 		header_title: 'Fiat Acceptance from Client',
+// 		type: 'select',
+// 		options: ['Bank transfer', 'Cash', 'Voucher'],
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Date',
+// 		type: 'date',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Transaction Reference Number',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Bank Name / Transaction Type / Cash Voucher',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Deposited Currency Type',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Deposited Currency Amount',
+// 		type: 'number',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Client Reference Number',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Client Type (Individual/Business)',
+// 		type: 'select',
+// 		options: ['Individual', 'Business'],
+// 		disabled: false,
+// 	},
+// 	{ header_title: 'Client Name', type: 'text', disabled: false },
+// 	{
+// 		header_title: 'Exchange Rate to Euro / Euro Rate',
+// 		type: 'number',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Euro Amount from Client',
+// 		type: 'calculateRateFromPlnToEur',
+// 		formula: (row, rowIndex, colIndex) =>
+// 			calculateRateFromPlnToEur(rows1, row, [5, 9], rowIndex, colIndex),
+// 		independent_on: [5, 9],
+// 		disabled: true,
+// 	},
+// 	{ header_title: 'Commission %', type: 'number', disabled: false },
+// 	{
+// 		header_title: 'Euro Sold After Commission',
+// 		type: 'calculateRateFromPlnToEur',
+// 		formula: (row, rowIndex, colIndex) =>
+// 			subtractingPercentageFromAmount(rows1, row, [10, 11], rowIndex, colIndex),
+// 		independent_on: [10, 11],
+// 		disabled: true,
+// 	},
+// 	{ header_title: 'Sold Crypto Type', type: 'text', disabled: false },
+// 	{ header_title: 'Crypto Rate from Wanda', type: 'number', disabled: false },
+// 	{
+// 		header_title: 'Sold Crypto Amount',
+// 		type: 'calculateMultiplicationByPurely',
+// 		formula: (row, rowIndex, colIndex) =>
+// 			calculateMultiplicationByPurely(rows1, row, [12, 14], rowIndex, colIndex),
+// 		independent_on: [12, 14],
+// 		disabled: true,
+// 	},
+// 	{
+// 		header_title: 'Wallet Number',
+// 		type: 'string',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Profit',
+// 		type: 'profit',
+// 		formula: (row, rowIndex, colIndex) =>
+// 			calculateSubtract(rows1, row, [10, 12], rowIndex, colIndex),
+// 		independent_on: [10, 12],
+// 		disabled: true,
+// 	},
+// ]);
+
+// const rows1 = ref([
+// 	[
+// 		'Bank transfer',
+// 		'2025-03-07',
+// 		'№12345',
+// 		'PKO',
+// 		'PLN',
+// 		'100',
+// 		'----',
+// 		'Business',
+// 		'Client Name',
+// 		4.14,
+// 		0,
+// 		1,
+// 		0,
+// 		'USDT',
+// 		1.04,
+// 		0,
+// 		'wallet',
+// 		0,
+// 	],
+// ]);
+// const headers2 = reactive([
+// 	{
+// 		header_title: 'Acceptance of Crypto from a customer',
+// 		type: 'select',
+// 		options: ['Crypto transfer'],
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Date',
+// 		type: 'date',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Transaction Reference Number',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Number of finalists',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Type of crypto deposited',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Amount of crypto deposited',
+// 		type: 'number',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Customer registration number',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Customer type',
+// 		type: 'select',
+// 		options: ['Individual', 'Business'],
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Client Name',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: "Wanda's exchange rate on the euro",
+// 		type: 'number',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Amount of Euros from the customer',
+// 		type: 'calculateRateFromPlnToEur',
+// 		formula: (row, rowIndex, colIndex) =>
+// 			calculateMultiplicationByPurely(rows2, row, [5, 9], rowIndex, colIndex),
+// 		independent_on: [5, 9],
+// 		disabled: true,
+// 	},
+// 	{
+// 		header_title: 'Commission %',
+// 		type: 'number',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Euro Sold After Commission',
+// 		type: 'subtractingPercentageFromAmount',
+// 		formula: (row, rowIndex, colIndex) =>
+// 			subtractingPercentageFromAmount(rows2, row, [10, 11], rowIndex, colIndex),
+// 		independent_on: [10, 11],
+// 		disabled: true,
+// 	},
+// 	{
+// 		header_title: 'Type of final operation for the customer',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: "Customer's target currency",
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Target currency exchange rate',
+// 		type: 'number',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Amount of target currency',
+// 		type: 'calculateRateFromPlnToEur',
+// 		formula: (row, rowIndex, colIndex) =>
+// 			calculateMultiplicationByPurely(rows2, row, [12, 15], rowIndex, colIndex),
+// 		independent_on: [12, 15],
+// 		disabled: true,
+// 	},
+// 	{
+// 		header_title: 'Customer account number',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Profit',
+// 		type: 'profit',
+// 		formula: (row, rowIndex, colIndex) =>
+// 			calculateSubtract(rows2, row, [10, 12], rowIndex, colIndex),
+// 		independent_on: [10, 12],
+// 		disabled: true,
+// 	},
+// ]);
+
+// const rows2 = ref([
+// 	[
+// 		'Crypto transfer',
+// 		'2025-03-07',
+// 		'№12345',
+// 		'Number of finalists',
+// 		'USDT',
+// 		10000,
+// 		'-',
+// 		'Business',
+// 		'Client Name',
+// 		0.95,
+// 		0,
+// 		1,
+// 		0,
+// 		'Transfer',
+// 		'PLN',
+// 		4.14,
+// 		'#123',
+// 		0,
+// 	],
+// ]);
+
+// const headers3 = reactive([
+// 	{
+// 		header_title: 'Adopt your own Fiat',
+// 		type: 'select',
+// 		options: ['Bank transfer'],
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Date',
+// 		type: 'date',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Transaction Reference Number',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Bank name/ type of operation/cash',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Type of currency deposited',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Amount of currency deposited',
+// 		type: 'number',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Customer registration number',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Origin / name of the exchange office',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Data of the depositor',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Target place of deposit',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// ]);
+
+// const rows3 = ref([
+// 	[
+// 		'Bank transfer',
+// 		'2025-03-07',
+// 		'#123',
+// 		'Bank transfer',
+// 		'PLN',
+// 		0,
+// 		'#123',
+// 		'Bank Reference',
+// 		'Data of the depositor',
+// 		'Target place of deposit',
+// 	],
+// ]);
+
+// const headers4 = reactive([
+// 	{
+// 		header_title: 'Account balance',
+// 		type: 'number',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'operation number',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'type of operation',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Currency type',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Amount of currency',
+// 		type: 'number',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Place of appreciation(san, wanda, checkout, etc.).',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Course (informational)',
+// 		type: 'number',
+// 		disabled: false,
+// 	},
+// ]);
+
+// const rows4 = ref([
+// 	[0, '#123', 'type', 'currency', 0, 'Place of appreciation', 0],
+// ]);
+
+// const headers5 = reactive([
+// 	{
+// 		header_title: 'Currency conversion of your own Fiat',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Date',
+// 		type: 'date',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Transaction Reference Number',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Type of initial currency',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Amount of initial currency',
+// 		type: 'number',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Target currency type',
+// 		type: 'EUR',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Target currency exchange rate',
+// 		type: 'number',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Amount of target currency',
+// 		type: 'calculateRateFromPlnToEur',
+// 		formula: (row, rowIndex, colIndex) =>
+// 			calculateRateFromPlnToEur(rows5, row, [4, 6], rowIndex, colIndex),
+// 		independent_on: [4, 6],
+// 		disabled: true,
+// 	},
+// 	{
+// 		header_title: 'Supply location',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// ]);
+
+// const rows5 = ref([
+// 	['Currency', '2025-03-07', '#123', 'PLN', 0, 'EUR', 4.14, 0, 'Wanda'],
+// ]);
+
+// const headers6 = reactive([
+// 	{
+// 		header_title: 'Bringing out your own for Fiat',
+// 		type: 'select',
+// 		options: ['Bank transfer'],
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Date',
+// 		type: 'date',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Transaction Reference Number',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Name of bank/type of operation',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Type of currency paid out',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Amount of currency paid out',
+// 		type: 'number',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Rate of currency paid out',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Target payout location',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Origin/name of the exchange office',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// 	{
+// 		header_title: 'Data of the paying agent',
+// 		type: 'text',
+// 		disabled: false,
+// 	},
+// ]);
+
+// const rows6 = ref([
+// 	[
+// 		'Bank transfer',
+// 		'2025-03-07',
+// 		'#123',
+// 		'Bank name',
+// 		'EUR',
+// 		0,
+// 		4.14,
+// 		'Cash',
+// 		'Wanda',
+// 		'M Głuchowska',
+// 	],
+// ]);
+
+// headers1
 const headers1 = reactive([
 	{
-		header_title: 'Fiat Acceptance from Client',
+		header_title: 'Przyjęcie fiat od klienta',
 		type: 'select',
-		options: ['Bank transfer', 'Cash', 'Voucher'],
+		options: ['Przelew bankowy', 'Gotówka', 'Voucher'],
 		disabled: false,
 	},
 	{
-		header_title: 'Date',
+		header_title: 'Data',
 		type: 'date',
 		disabled: false,
 	},
 	{
-		header_title: 'Transaction Reference Number',
+		header_title: 'Numer referencyjny transakcji',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Bank Name / Transaction Type / Cash Voucher',
+		header_title: 'Nazwa banku / Rodzaj transakcji / Kupon gotówkowy',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Deposited Currency Type',
+		header_title: 'Rodzaj wpłaconej waluty',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Deposited Currency Amount',
+		header_title: 'Kwota wpłaconej waluty',
 		type: 'number',
 		disabled: false,
 	},
 	{
-		header_title: 'Client Reference Number',
+		header_title: 'Numer referencyjny klienta',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Client Type (Individual/Business)',
+		header_title: 'Typ klienta (Osoba prywatna/Firma)',
 		type: 'select',
-		options: ['Individual', 'Business'],
+		options: ['Osoba prywatna', 'Firma'],
 		disabled: false,
 	},
-	{ header_title: 'Client Name', type: 'text', disabled: false },
+	{ header_title: 'Nazwa klienta', type: 'text', disabled: false },
 	{
-		header_title: 'Exchange Rate to Euro / Euro Rate',
+		header_title: 'Kurs wymiany na euro / Kurs euro',
 		type: 'number',
 		disabled: false,
 	},
 	{
-		header_title: 'Euro Amount from Client',
+		header_title: 'Kwota euro od klienta',
 		type: 'calculateRateFromPlnToEur',
 		formula: (row, rowIndex, colIndex) =>
 			calculateRateFromPlnToEur(rows1, row, [5, 9], rowIndex, colIndex),
 		independent_on: [5, 9],
 		disabled: true,
 	},
-	{ header_title: 'Commission %', type: 'number', disabled: false },
+	{ header_title: 'Procent prowizji', type: 'number', disabled: false },
 	{
-		header_title: 'Euro Sold After Commission',
+		header_title: 'Euro sprzedane po prowizji',
 		type: 'calculateRateFromPlnToEur',
 		formula: (row, rowIndex, colIndex) =>
 			subtractingPercentageFromAmount(rows1, row, [10, 11], rowIndex, colIndex),
 		independent_on: [10, 11],
 		disabled: true,
 	},
-	{ header_title: 'Sold Crypto Type', type: 'text', disabled: false },
-	{ header_title: 'Crypto Rate from Wanda', type: 'number', disabled: false },
 	{
-		header_title: 'Sold Crypto Amount',
+		header_title: 'Rodzaj sprzedanej kryptowaluty',
+		type: 'text',
+		disabled: false,
+	},
+	{
+		header_title: 'Kurs kryptowaluty od Wandy',
+		type: 'number',
+		disabled: false,
+	},
+	{
+		header_title: 'Ilość sprzedanej kryptowaluty',
 		type: 'calculateMultiplicationByPurely',
 		formula: (row, rowIndex, colIndex) =>
 			calculateMultiplicationByPurely(rows1, row, [12, 14], rowIndex, colIndex),
@@ -214,12 +706,12 @@ const headers1 = reactive([
 		disabled: true,
 	},
 	{
-		header_title: 'Wallet Number',
+		header_title: 'Numer portfela',
 		type: 'string',
 		disabled: false,
 	},
 	{
-		header_title: 'Profit',
+		header_title: 'Zysk',
 		type: 'profit',
 		formula: (row, rowIndex, colIndex) =>
 			calculateSubtract(rows1, row, [10, 12], rowIndex, colIndex),
@@ -228,17 +720,18 @@ const headers1 = reactive([
 	},
 ]);
 
+// rows1
 const rows1 = ref([
 	[
-		'Bank transfer',
+		'Przelew bankowy',
 		'2025-03-07',
 		'№12345',
 		'PKO',
 		'PLN',
 		'100',
 		'----',
-		'Business',
-		'Client Name',
+		'Firma',
+		'Nazwa klienta',
 		4.14,
 		0,
 		1,
@@ -246,65 +739,67 @@ const rows1 = ref([
 		'USDT',
 		1.04,
 		0,
-		'wallet',
+		'portfel',
 		0,
 	],
 ]);
+
+// headers2
 const headers2 = reactive([
 	{
-		header_title: 'Acceptance of Crypto from a customer',
+		header_title: 'Przyjęcie kryptowaluty od klienta',
 		type: 'select',
-		options: ['Crypto transfer'],
+		options: ['Transfer kryptowalut'],
 		disabled: false,
 	},
 	{
-		header_title: 'Date',
+		header_title: 'Data',
 		type: 'date',
 		disabled: false,
 	},
 	{
-		header_title: 'Transaction Reference Number',
+		header_title: 'Numer referencyjny transakcji',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Number of finalists',
+		header_title: 'Liczba finalistów',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Type of crypto deposited',
+		header_title: 'Rodzaj wpłaconej kryptowaluty',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Amount of crypto deposited',
+		header_title: 'Ilość wpłaconej kryptowaluty',
 		type: 'number',
 		disabled: false,
 	},
 	{
-		header_title: 'Customer registration number',
+		header_title: 'Numer rejestracyjny klienta',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Customer type',
+		header_title: 'Typ klienta',
 		type: 'select',
-		options: ['Individual', 'Business'],
+		options: ['Osoba prywatna', 'Firma'],
 		disabled: false,
 	},
 	{
-		header_title: 'Client Name',
+		header_title: 'Nazwa klienta',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: "Wanda's exchange rate on the euro",
+		header_title: 'Kurs wymiany Wandy na euro',
 		type: 'number',
 		disabled: false,
 	},
 	{
-		header_title: 'Amount of Euros from the customer',
+		header_title: 'Kwota euro od klienta',
 		type: 'calculateRateFromPlnToEur',
 		formula: (row, rowIndex, colIndex) =>
 			calculateMultiplicationByPurely(rows2, row, [5, 9], rowIndex, colIndex),
@@ -312,12 +807,12 @@ const headers2 = reactive([
 		disabled: true,
 	},
 	{
-		header_title: 'Commission %',
+		header_title: 'Procent prowizji',
 		type: 'number',
 		disabled: false,
 	},
 	{
-		header_title: 'Euro Sold After Commission',
+		header_title: 'Euro sprzedane po prowizji',
 		type: 'subtractingPercentageFromAmount',
 		formula: (row, rowIndex, colIndex) =>
 			subtractingPercentageFromAmount(rows2, row, [10, 11], rowIndex, colIndex),
@@ -325,22 +820,22 @@ const headers2 = reactive([
 		disabled: true,
 	},
 	{
-		header_title: 'Type of final operation for the customer',
+		header_title: 'Rodzaj finalnej operacji dla klienta',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: "Customer's target currency",
+		header_title: 'Docelowa waluta klienta',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Target currency exchange rate',
+		header_title: 'Kurs wymiany docelowej waluty',
 		type: 'number',
 		disabled: false,
 	},
 	{
-		header_title: 'Amount of target currency',
+		header_title: 'Ilość docelowej waluty',
 		type: 'calculateRateFromPlnToEur',
 		formula: (row, rowIndex, colIndex) =>
 			calculateMultiplicationByPurely(rows2, row, [12, 15], rowIndex, colIndex),
@@ -348,12 +843,12 @@ const headers2 = reactive([
 		disabled: true,
 	},
 	{
-		header_title: 'Customer account number',
+		header_title: 'Numer konta klienta',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Profit',
+		header_title: 'Zysk',
 		type: 'profit',
 		formula: (row, rowIndex, colIndex) =>
 			calculateSubtract(rows2, row, [10, 12], rowIndex, colIndex),
@@ -362,17 +857,18 @@ const headers2 = reactive([
 	},
 ]);
 
+// rows2
 const rows2 = ref([
 	[
-		'Crypto transfer',
+		'Transfer kryptowalut',
 		'2025-03-07',
 		'№12345',
-		'Number of finalists',
+		'Liczba finalistów',
 		'USDT',
 		10000,
 		'-',
-		'Business',
-		'Client Name',
+		'Firma',
+		'Nazwa klienta',
 		0.95,
 		0,
 		1,
@@ -385,155 +881,158 @@ const rows2 = ref([
 	],
 ]);
 
+// headers3
 const headers3 = reactive([
 	{
-		header_title: 'Adopt your own Fiat',
+		header_title: 'Przyjmij własne fiat',
 		type: 'select',
-		options: ['Bank transfer'],
+		options: ['Przelew bankowy'],
 		disabled: false,
 	},
 	{
-		header_title: 'Date',
+		header_title: 'Data',
 		type: 'date',
 		disabled: false,
 	},
 	{
-		header_title: 'Transaction Reference Number',
+		header_title: 'Numer referencyjny transakcji',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Bank name/ type of operation/cash',
+		header_title: 'Nazwa banku / typ operacji / gotówka',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Type of currency deposited',
+		header_title: 'Rodzaj wpłaconej waluty',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Amount of currency deposited',
+		header_title: 'Ilość wpłaconej waluty',
 		type: 'number',
 		disabled: false,
 	},
 	{
-		header_title: 'Customer registration number',
+		header_title: 'Numer rejestracyjny klienta',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Origin / name of the exchange office',
+		header_title: 'Pochodzenie / nazwa kantoru wymiany',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Data of the depositor',
+		header_title: 'Dane deponenta',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Target place of deposit',
+		header_title: 'Miejsce docelowego depozytu',
 		type: 'text',
 		disabled: false,
 	},
 ]);
 
+// rows3
 const rows3 = ref([
 	[
-		'Bank transfer',
+		'Przelew bankowy',
 		'2025-03-07',
 		'#123',
-		'Bank transfer',
+		'Przelew bankowy',
 		'PLN',
 		0,
 		'#123',
-		'Bank Reference',
-		'Data of the depositor',
-		'Target place of deposit',
+		'Referencja bankowa',
+		'Dane deponenta',
+		'Miejsce docelowego depozytu',
 	],
 ]);
 
+// headers4
 const headers4 = reactive([
 	{
-		header_title: 'Account balance',
+		header_title: 'Stan konta',
 		type: 'number',
 		disabled: false,
 	},
 	{
-		header_title: 'operation number',
+		header_title: 'Numer operacji',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'type of operation',
+		header_title: 'Typ operacji',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Currency type',
+		header_title: 'Rodzaj waluty',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Amount of currency',
+		header_title: 'Ilość waluty',
 		type: 'number',
 		disabled: false,
 	},
 	{
-		header_title: 'Place of appreciation(san, wanda, checkout, etc.).',
+		header_title: 'Miejsce rozliczenia (san, wanda, checkout, itp.)',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Course (informational)',
+		header_title: 'Kurs (informacyjny)',
 		type: 'number',
 		disabled: false,
 	},
 ]);
 
-const rows4 = ref([
-	[0, '#123', 'type', 'currency', 0, 'Place of appreciation', 0],
-]);
+// rows4
+const rows4 = ref([[0, '#123', 'typ', 'waluta', 0, 'Miejsce rozliczenia', 0]]);
 
+// headers5
 const headers5 = reactive([
 	{
-		header_title: 'Currency conversion of your own Fiat',
+		header_title: 'Kurs wymiany własnego fiat',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Date',
+		header_title: 'Data',
 		type: 'date',
 		disabled: false,
 	},
 	{
-		header_title: 'Transaction Reference Number',
+		header_title: 'Numer referencyjny transakcji',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Type of initial currency',
+		header_title: 'Rodzaj waluty początkowej',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Amount of initial currency',
+		header_title: 'Ilość waluty początkowej',
 		type: 'number',
 		disabled: false,
 	},
 	{
-		header_title: 'Target currency type',
-		type: 'EUR',
-		disabled: false,
-	},
-	{
-		header_title: 'Target currency exchange rate',
+		header_title: 'Rodzaj waluty docelowej',
 		type: 'number',
 		disabled: false,
 	},
 	{
-		header_title: 'Amount of target currency',
+		header_title: 'Kurs wymiany waluty docelowej',
+		type: 'number',
+		disabled: false,
+	},
+	{
+		header_title: 'Ilość waluty docelowej',
 		type: 'calculateRateFromPlnToEur',
 		formula: (row, rowIndex, colIndex) =>
 			calculateRateFromPlnToEur(rows5, row, [4, 6], rowIndex, colIndex),
@@ -541,80 +1040,83 @@ const headers5 = reactive([
 		disabled: true,
 	},
 	{
-		header_title: 'Supply location',
+		header_title: 'Miejsce dostawy',
 		type: 'text',
 		disabled: false,
 	},
 ]);
 
+// rows5
 const rows5 = ref([
-	['Currency', '2025-03-07', '#123', 'PLN', 0, 'EUR', 4.14, 0, 'Wanda'],
+	['Waluta', '2025-03-07', '#123', 'PLN', 0, 'EUR', 4.14, 0, 'Wanda'],
 ]);
 
+// headers6
 const headers6 = reactive([
 	{
-		header_title: 'Bringing out your own for Fiat',
+		header_title: 'Wypłata własnego fiat',
 		type: 'select',
-		options: ['Bank transfer'],
+		options: ['Przelew bankowy'],
 		disabled: false,
 	},
 	{
-		header_title: 'Date',
+		header_title: 'Data',
 		type: 'date',
 		disabled: false,
 	},
 	{
-		header_title: 'Transaction Reference Number',
+		header_title: 'Numer referencyjny transakcji',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Name of bank/type of operation',
+		header_title: 'Nazwa banku/typ operacji',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Type of currency paid out',
+		header_title: 'Rodzaj wypłacanej waluty',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Amount of currency paid out',
+		header_title: 'Ilość wypłacanej waluty',
 		type: 'number',
 		disabled: false,
 	},
 	{
-		header_title: 'Rate of currency paid out',
+		header_title: 'Kurs wypłacanej waluty',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Target payout location',
+		header_title: 'Miejsce wypłaty',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Origin/name of the exchange office',
+		header_title: 'Pochodzenie/nazwa kantoru wymiany',
 		type: 'text',
 		disabled: false,
 	},
 	{
-		header_title: 'Data of the paying agent',
+		header_title: 'Dane agenta wypłaty',
 		type: 'text',
 		disabled: false,
 	},
 ]);
 
+// rows6
 const rows6 = ref([
 	[
-		'Bank transfer',
+		'Przelew bankowy',
 		'2025-03-07',
 		'#123',
-		'Bank name',
+		'Nazwa banku',
 		'EUR',
 		0,
 		4.14,
-		'Cash',
+		'Gotówka',
 		'Wanda',
 		'M Głuchowska',
 	],
